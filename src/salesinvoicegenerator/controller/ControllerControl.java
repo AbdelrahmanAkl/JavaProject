@@ -4,24 +4,33 @@ package salesinvoicegenerator.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import salesinvoicegenerator.model.InvoicesTable;
 import salesinvoicegenerator.model.LinesTable;
 import salesinvoicegenerator.model.SalesInvoice;
 import salesinvoicegenerator.model.SalesLine;
+import salesinvoicegenerator.view.InvoiceDial;
+
 import salesinvoicegenerator.view.InvoiceFrame;
+import salesinvoicegenerator.view.LineDial;
 
 
 public class ControllerControl  implements ActionListener,ListSelectionListener{
     private InvoiceFrame frame;
+    private InvoiceDial invoiceDial;
+    private LineDial lineDial;
     public ControllerControl(InvoiceFrame frame){
         this.frame = frame;
     }
@@ -50,20 +59,21 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
             case "Delete Item":
                 deleteItem();
                 break;
-            case "createInvoiceCancel": 
-                createInvoiceCancel();
+            case "saveInvoice":
+                saveInvoice();
                 break;
-            case "createInvoiceOK":
-                createInvoiceOK();
+            case "cancelInvoice":
+                cancelInvoice();
                 break;
-            case "createLineOK":
-                createLineOK();
+            case "saveLine":
+                saveLine();
                 break;
-            case "createLineCancel":
-                createLineCancel();
+            case "cancelLine":
+                cancelLine();
                 break;
-        }
-        }
+                 
+                    
+        }}
  @Override
     public void valueChanged(ListSelectionEvent e) {
         int IndexSelect = frame.getInvoiceRecordTable().getSelectedRow();
@@ -146,12 +156,67 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
     }
 
     private void saveFiles() {
-    }
+        ArrayList <SalesInvoice> invoiceFiles = frame.getInvoicees();
+        String invoice="";
+        String createline="";
+        for (SalesInvoice file :invoiceFiles){
+            String invoicefile =file.getSaveInvoice();
+            invoice+=invoicefile;
+            invoice+="\n";
+           
+            for (SalesLine creaetedline: file.getLines()){
+                String lineFile = creaetedline.getSaveLine();
+                createline+=lineFile;
+                createline+="\n";
+                
+            }
+        }
+        try{
+        JFileChooser save=new JFileChooser();
+        int buttonChooser=save.showSaveDialog(frame);
+        if(buttonChooser==JFileChooser.APPROVE_OPTION){
+            File invoiceHeader=save.getSelectedFile();
+            FileWriter header= new FileWriter(invoiceHeader);
+            header.write(invoice);
+            header.flush();
+            header.close();
+            buttonChooser=save.showSaveDialog(frame);
+            
+            if(buttonChooser==JFileChooser.APPROVE_OPTION){
+                File invoiceLine =save.getSelectedFile();
+                FileWriter liner = new FileWriter(invoiceLine);
+                liner.write(createline);
+                liner.flush();
+                liner.close();
+            }
+        }
+        }catch(Exception a){}
+        }
 
     private void createNewInvoice() {
-       
+
+       invoiceDial = new InvoiceDial(frame);
+         invoiceDial.setVisible(true);
+         int invoiceIndex = frame.getInvoiceRecordTable().getSelectedRow();
+            int rowIndex = frame.getInvoiceItemsTable().getSelectedRow();
+            if((invoiceIndex&rowIndex)==-1)
+            {}
+            else{
+                SalesInvoice selectedInvoice=frame.getInvoicees().get(invoiceIndex);
+                selectedInvoice.getLines().remove(rowIndex);
+                LinesTable modified= new LinesTable(selectedInvoice.getLines());
+                frame.getInvoiceItemsTable().setModel(modified);
+                modified.fireTableDataChanged(); 
+                frame.getInvoicestable().fireTableDataChanged();
+                
+                
+            
+        }
         
-    }
+       }
+    
+
+    
 
     private void deleteInvoice() {
         int SelectRow = frame.getInvoiceRecordTable().getSelectedRow();
@@ -164,6 +229,9 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
     }
 
     private void createNewItem() {
+        lineDial = new LineDial(frame);
+                     lineDial.setVisible(true);
+            
         
     }
 
@@ -178,19 +246,64 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
             linetable.fireTableDataChanged();
         }
                 
+        
        
     }
 
-    private void createInvoiceCancel() {
+    private void saveInvoice() {
+        DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
+        String CustomerName = invoiceDial.getCustomerName().getText();
+        String date = invoiceDial.getDate().getText();
+        int invoiceNum=frame.getNewNum();
+        try{
+            format.parse(date);
+            SalesInvoice newCreated = new SalesInvoice(invoiceNum, date, CustomerName);
+            frame.getInvoicees().add(newCreated);
+            frame.getInvoicestable().fireTableDataChanged();
+                 invoiceDial.setVisible(false);
+                 invoiceDial.dispose();
+                 invoiceDial = null;
+        }catch(Exception a){
+            JOptionPane.showMessageDialog(frame, "Invalid Format", "Invalid date ",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    private void createInvoiceOK() {
-    }
+    private void cancelInvoice() {
+            invoiceDial.setVisible(false);
+            invoiceDial.dispose();
+            invoiceDial = null;    }
 
-    private void createLineOK() {
-    }
+    private void saveLine() {
+        try{
+            String item = lineDial.getItemName().getText();
+            String priceStr = lineDial.getItemPrice().getText();
+            double price = Double.parseDouble(priceStr);
+            String quantityStr=lineDial.getItemQuantity().getText();
+            int quantity = Integer.parseInt(quantityStr);
+            int row= frame.getInvoiceItemsTable().getSelectedRow();
+            if(row !=-1){
+            SalesInvoice selected = frame.getInvoicees().get(row);
+            SalesLine created = new SalesLine(row, item, price, row, selected);
+            selected.getLines().add(created);
+            LinesTable modified= new LinesTable(selected.getLines());
+                frame.getInvoiceItemsTable().setModel(modified);
+                modified.fireTableDataChanged();
+                frame.getInvoicestable().fireTableDataChanged();
+    } }catch(Exception a){
+            JOptionPane.showMessageDialog(frame, "Invalid Format", "Data  Invalid",
+                    JOptionPane.WARNING_MESSAGE);}
+            lineDial.setVisible(false);
+            lineDial.dispose();
+            lineDial = null;
+        }
+     
 
-    private void createLineCancel() {
+
+    private void cancelLine() {
+        lineDial.setVisible(false);
+            lineDial.dispose();
+            lineDial = null;
     }
 
    

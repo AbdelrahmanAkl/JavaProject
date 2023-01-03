@@ -16,6 +16,11 @@ public class SalesInvoice {
             lines = new ArrayList<>();
         return lines;
     }
+        public String getSaveInvoice(){
+    
+    return numb + "," + datee + "," + nameOfCustomer + "," ;
+    }
+
     
     
     
@@ -81,6 +86,8 @@ public class SalesInvoice {
     public void setNameOfCustomer(String nameOfCustomer) {
         this.nameOfCustomer = nameOfCustomer;
     }
+
+    
     
 }
 

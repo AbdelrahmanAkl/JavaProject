@@ -48,5 +48,7 @@ public class InvoicesTable extends AbstractTableModel {
     }
 
     
+
+    
 }
 

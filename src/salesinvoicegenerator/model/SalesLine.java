@@ -57,6 +57,11 @@ public class SalesLine {
     public void setItmePrice(double itmePrice) {
         this.itmePrice = itmePrice;
     }
+
+   public String getSaveLine(){
+    
+    return Invoice.getNumb() + "," + itemName + "," + itmePrice + "," + count ;
+    }
     
     
     
