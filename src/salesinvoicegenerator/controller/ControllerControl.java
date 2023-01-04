@@ -287,6 +287,9 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
     }
 
     private void cancelLine() {
+         lineDial.setVisible(false);
+            lineDial.dispose();
+            lineDial = null;
     }
 
     private void saveLine() {
