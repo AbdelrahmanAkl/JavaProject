@@ -73,7 +73,11 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
                 break;
                  
                     
-        }}
+        }
+    
+    
+}
+    
  @Override
     public void valueChanged(ListSelectionEvent e) {
         int IndexSelect = frame.getInvoiceRecordTable().getSelectedRow();
@@ -195,7 +199,7 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
 
     private void createNewInvoice() {
 
-       invoiceDial = new InvoiceDial(frame);
+        invoiceDial = new InvoiceDial(frame);
          invoiceDial.setVisible(true);
          int invoiceIndex = frame.getInvoiceRecordTable().getSelectedRow();
             int rowIndex = frame.getInvoiceItemsTable().getSelectedRow();
@@ -228,12 +232,15 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
        
     }
 
-    private void createNewItem() {
-        lineDial = new LineDial(frame);
-                     lineDial.setVisible(true);
-            
+    
         
-    }
+
+                    
+              
+                        
+                        
+                   
+    
 
     private void deleteItem() {
         int SelectInvoiceRow = frame.getInvoiceRecordTable().getSelectedRow();
@@ -274,40 +281,39 @@ public class ControllerControl  implements ActionListener,ListSelectionListener{
             invoiceDial.dispose();
             invoiceDial = null;    }
 
-    private void saveLine() {
-        try{
-            String item = lineDial.getItemName().getText();
-            String priceStr = lineDial.getItemPrice().getText();
-            double price = Double.parseDouble(priceStr);
-            String quantityStr=lineDial.getItemQuantity().getText();
-            int quantity = Integer.parseInt(quantityStr);
-            int row= frame.getInvoiceItemsTable().getSelectedRow();
-            if(row !=-1){
-            SalesInvoice selected = frame.getInvoicees().get(row);
-            SalesLine created = new SalesLine(row, item, price, row, selected);
-            selected.getLines().add(created);
-            LinesTable modified= new LinesTable(selected.getLines());
-                frame.getInvoiceItemsTable().setModel(modified);
-                modified.fireTableDataChanged();
-                frame.getInvoicestable().fireTableDataChanged();
-    } }catch(Exception a){
-            JOptionPane.showMessageDialog(frame, "Invalid Format", "Data  Invalid",
-                    JOptionPane.WARNING_MESSAGE);}
-            lineDial.setVisible(false);
-            lineDial.dispose();
-            lineDial = null;
-        }
-     
-
-
-    private void cancelLine() {
-        lineDial.setVisible(false);
-            lineDial.dispose();
-            lineDial = null;
+    private void createNewItem() {
+         lineDial = new LineDial(frame);
+         lineDial.setVisible(true);
     }
 
+    private void cancelLine() {
+    }
+
+    private void saveLine() {
+        String item = lineDial.getItemName().getText();
+        String count = lineDial.getItemQuantity().getText();
+        String price = lineDial.getItemPrice().getText();
+        int countt = Integer.parseInt(count);
+        double princee = Double.parseDouble(price);
+        int SelectedInvoiceRow = frame.getInvoiceRecordTable().getSelectedRow();
+        if(SelectedInvoiceRow != -1){
+            SalesInvoice salesInvoice = frame.getInvoicees().get(SelectedInvoiceRow);
+            SalesLine salesline = new SalesLine(countt, item, princee, countt, salesInvoice);
+            salesInvoice.getLines().add(salesline);
+            LinesTable linetable = (LinesTable) frame.getInvoiceItemsTable().getModel();
+            linetable.fireTableDataChanged();
+            frame.getInvoicestable().fireTableDataChanged();
+            lineDial.setVisible(false);
+            lineDial.dispose();
+            
+            
+            
+        }
+    }
+
+}
    
        
     
-}
+
 

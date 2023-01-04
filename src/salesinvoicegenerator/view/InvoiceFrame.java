@@ -8,6 +8,7 @@ import salesinvoicegenerator.controller.ControllerControl;
 import salesinvoicegenerator.model.InvoicesTable;
 import salesinvoicegenerator.model.SalesInvoice;
 import javax.swing.JTextField;
+import salesinvoicegenerator.model.LinesTable;
 
 public class InvoiceFrame extends javax.swing.JFrame {
 
@@ -324,6 +325,19 @@ public class InvoiceFrame extends javax.swing.JFrame {
 
     private ArrayList <SalesInvoice> invoicees;
     private InvoicesTable invoicestable;
+    private LinesTable linestable;
+
+    public void setInvoicestable(InvoicesTable invoicestable) {
+        this.invoicestable = invoicestable;
+    }
+
+    public LinesTable getLinestable() {
+        return linestable;
+    }
+
+    public void setLinestable(LinesTable linestable) {
+        this.linestable = linestable;
+    }
 
     public JLabel getCustomerNameLabel() {
         return CustomerNameLabel;
@@ -357,9 +371,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
         return invoicestable;
     }
 
-    public void setInvoicestable(InvoicesTable invoicestable) {
-        this.invoicestable = invoicestable;
-    }
+    
     public ArrayList <SalesInvoice> getInvoicees() {
         return invoicees;
     }

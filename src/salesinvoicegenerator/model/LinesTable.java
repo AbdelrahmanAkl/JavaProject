@@ -7,10 +7,20 @@ import javax.swing.table.AbstractTableModel;
 public class LinesTable extends AbstractTableModel{
     private ArrayList<SalesLine> lines;
     private String[] columnsNames ={"Num","Item Name","Item Price","Item Count","Total"};
-    
-public LinesTable(ArrayList<SalesLine> lines) {
+
+    public ArrayList<SalesLine> getLines() {
+        return lines;
+    }
+
+    public LinesTable(ArrayList<SalesLine> lines) {
         this.lines = lines;
     }
+
+    public void setLines(ArrayList<SalesLine> lines) {
+        this.lines = lines;
+    }
+    
+
     
     @Override
     public int getRowCount() {
